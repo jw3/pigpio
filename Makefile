@@ -6,7 +6,7 @@ SIZE     = size
 SHLIB    = gcc -shared
 STRIPLIB = strip --strip-unneeded
 
-CFLAGS	+= -O3 -Wall -pthread
+CFLAGS	+= -O3 -Wall -pthread -I /usr/local/java/include -I /usr/local/java/include/linux
 
 LIB1     = libpigpio.so
 OBJ1     = pigpio.o command.o
@@ -21,7 +21,7 @@ LIB      = $(LIB1) $(LIB2) $(LIB3)
 
 ALL     = $(LIB) x_pigpio x_pigpiod_if x_pigpiod_if2 pig2vcd pigpiod pigs
 
-LL1      = -L. -lpigpio -pthread -lrt
+LL1      = -L. -lpigpio -pthread -lrt -L /usr/local/java/jre/lib/amd64 -L /usr/local/java/jre/lib/amd64/server/ -ljvm
 
 LL2      = -L. -lpigpiod_if -pthread -lrt
 

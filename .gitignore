@@ -1,0 +1,12 @@
+/Debug
+.idea
+*.o
+/libpigpio.so
+/libpigpiod_if.so
+/libpigpiod_if2.so
+/pig2vcd
+/pigpiod
+/pigs
+/x_pigpio
+/x_pigpiod_if
+/x_pigpiod_if2

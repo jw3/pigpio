@@ -60,6 +60,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <sys/select.h>
 #include <fnmatch.h>
 #include <glob.h>
+#include <jni.h>
 
 #include "pigpio.h"
 
@@ -1167,6 +1168,10 @@ typedef struct
    uintptr_t *virtual_addr; /* mbMapMem() */
    unsigned  size;          /* in bytes */
 } DMAMem_t;
+
+/* jni ----------------------------------------------------------- */
+
+static JavaVM* jvm = NULL;
 
 /* global -------------------------------------------------------- */
 
@@ -5932,6 +5937,9 @@ static void alertWdogCheck(gpioSample_t *sample, int numSamples)
 
 static void * pthAlertThread(void *x)
 {
+   JNIEnv* env = 0;
+   (*jvm)->AttachCurrentThread(jvm, (void**) &env, NULL);
+
    struct timespec req, rem;
    uint32_t oldLevel, newLevel, level;
    uint32_t oldSlot,  newSlot;
@@ -6160,6 +6168,8 @@ static void * pthAlertThread(void *x)
          }
       }
    }
+
+   (*jvm)->DetachCurrentThread(jvm);
 
    return 0;
 }
@@ -8181,6 +8191,17 @@ int gpioInitialise(void)
       libInitialised = 1;
       runState = PI_RUNNING;
    }
+
+    int sz = 0;
+    JNI_GetCreatedJavaVMs(&jvm, 1, &sz);
+    fprintf(stderr, "found %d vms", sz);
+
+    if(!jvm)
+    {
+        runState = PI_ENDING;
+        initReleaseResources();
+        return -1;
+    }
 
    return status;
 }
@@ -12926,7 +12947,6 @@ int gpioCfgInternals(unsigned cfgWhat, unsigned cfgVal)
 
    return retVal;
 }
-
 
 /* include any user customisations */
 
