@@ -8179,6 +8179,18 @@ int gpioInitialise(void)
 
    runState = PI_STARTING;
 
+    int sz = 0;
+    JNI_GetCreatedJavaVMs(&jvm, 1, &sz);
+    fprintf(stderr, "found %d vms\n", sz);
+
+    if(!jvm)
+    {
+        fprintf(stderr, "found no vms, exiting\n");
+        runState = PI_ENDING;
+        initReleaseResources();
+        return -1;
+    }
+
    status = initInitialise();
 
    if (status < 0)
@@ -8186,22 +8198,10 @@ int gpioInitialise(void)
       runState = PI_ENDING;
       initReleaseResources();
    }
-   else
-   {
-      libInitialised = 1;
-      runState = PI_RUNNING;
+   else {
+       libInitialised = 1;
+       runState = PI_RUNNING;
    }
-
-    int sz = 0;
-    JNI_GetCreatedJavaVMs(&jvm, 1, &sz);
-    fprintf(stderr, "found %d vms", sz);
-
-    if(!jvm)
-    {
-        runState = PI_ENDING;
-        initReleaseResources();
-        return -1;
-    }
 
    return status;
 }
