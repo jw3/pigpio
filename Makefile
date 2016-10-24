@@ -21,7 +21,7 @@ LIB      = $(LIB1) $(LIB2) $(LIB3)
 
 ALL     = $(LIB) x_pigpio x_pigpiod_if x_pigpiod_if2 pig2vcd pigpiod pigs
 
-LL1      = -L. -lpigpio -pthread -lrt -L /usr/local/java/jre/lib/amd64 -L /usr/local/java/jre/lib/amd64/server/ -ljvm
+LL1      = -L. -lpigpio -pthread -lrt -L /usr/local/java/jre/lib/arm -L /usr/local/java/jre/lib/arm/client -ljvm
 
 LL2      = -L. -lpigpiod_if -pthread -lrt
 
