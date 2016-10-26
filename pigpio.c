@@ -10797,6 +10797,8 @@ static int intGpioSetAlertFunc(
 
 /* ----------------------------------------------------------------------- */
 
+jobject frefs[PI_MAX_GPIO];
+
 int gpioSetAlertFunc(unsigned gpio, gpioAlertFunc_t f)
 {
    DBG(DBG_USER, "gpio=%d function=%08X", gpio, (uint32_t)f);
@@ -10806,7 +10808,17 @@ int gpioSetAlertFunc(unsigned gpio, gpioAlertFunc_t f)
    if (gpio > PI_MAX_USER_GPIO)
       SOFT_ERROR(PI_BAD_USER_GPIO, "bad gpio (%d)", gpio);
 
+    JNIEnv* env = 0;
+    (*jvm)->AttachCurrentThread(jvm, (void**) &env, NULL);
+
    intGpioSetAlertFunc(gpio, f, 0, NULL);
+
+    if (frefs[gpio] != NULL) {
+        (*env)->DeleteGlobalRef(env, frefs[gpio]);
+    }
+    frefs[gpio] = (*env)->NewGlobalRef(env, f);
+
+    (*jvm)->DetachCurrentThread(jvm);
 
    return 0;
 }
